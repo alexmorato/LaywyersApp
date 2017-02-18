@@ -27,7 +27,7 @@ import com.alexmorato.laywyersapp.data.LawyersDbHelper;
  */
 public class LawyersFragment extends Fragment {
 
-    private static final int REQUEST_UPDATE_DELETE_LAWYER = 1;
+    public static final int REQUEST_UPDATE_DELETE_LAWYER = 1;
 
     private LawyersDbHelper mLawyersDbHelper;
 

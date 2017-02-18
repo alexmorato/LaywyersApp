@@ -1,6 +1,7 @@
 package com.alexmorato.laywyersapp.LawerDetail;
 
 
+import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -17,6 +19,8 @@ import com.alexmorato.laywyersapp.Helpers.ToastHelper;
 import com.alexmorato.laywyersapp.R;
 import com.alexmorato.laywyersapp.data.Lawyer;
 import com.alexmorato.laywyersapp.data.LawyersDbHelper;
+import com.alexmorato.laywyersapp.lawyers.LawyersActivity;
+import com.alexmorato.laywyersapp.lawyers.LawyersFragment;
 import com.bumptech.glide.Glide;
 
 /**
@@ -55,6 +59,7 @@ public class LawyerDetailFragment extends Fragment {
             mLawyerId = getArguments().getString("ARG_LAWYER_ID");
         }
 
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -123,4 +128,43 @@ public class LawyerDetailFragment extends Fragment {
         // Acciones
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_edit:
+                showEditScreen();
+                break;
+            case R.id.action_delete:
+                new DeleteLawyerTask().execute();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private class DeleteLawyerTask extends AsyncTask<Void, Void, Integer> {
+
+        @Override
+        protected Integer doInBackground(Void... voids) {
+            return mLawyersDbHelper.deleteLawyer(mLawyerId);
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            showLawyersScreen(integer > 0);
+        }
+    }
+
+    private void showLawyersScreen(boolean requery) {
+        if (!requery) {
+            ToastHelper.ShowMessage(getContext(), "Error al borrar abogado");
+        }
+        getActivity().setResult(requery ? Activity.RESULT_OK : Activity.RESULT_CANCELED);
+        getActivity().finish();
+    }
+
+    private void showEditScreen() {
+        //Intent intent = new Intent(getActivity(), AddEditLawyerActivity.class);
+        //intent.putExtra(LawyersActivity.EXTRA_LAWYER_ID, mLawyerId);
+        //startActivityForResult(intent, LawyersFragment.REQUEST_UPDATE_DELETE_LAWYER);
+    }
 }

@@ -58,6 +58,13 @@ public class LawyersDbHelper extends SQLiteOpenHelper{
 
     }
 
+    public int deleteLawyer(String lawyerId) {
+        return getWritableDatabase().delete(
+                LawyersContract.LawyerEntry.TABLE_NAME,
+                LawyersContract.LawyerEntry.ID + " LIKE ?",
+                new String[]{lawyerId});
+    }
+
     public Cursor getAllLawyers() {
         return getReadableDatabase()
                 .query(
