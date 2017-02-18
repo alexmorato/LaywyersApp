@@ -20,7 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class LawyersDbHelper extends SQLiteOpenHelper{
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 3;
     public static final String DATABASE_NAME = "Lawyers.db";
 
     public LawyersDbHelper(Context context) {
@@ -46,6 +46,8 @@ public class LawyersDbHelper extends SQLiteOpenHelper{
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // No hay operaciones
+        db.execSQL("DROP TABLE IF EXISTS " + LawyersContract.LawyerEntry.TABLE_NAME);
+        onCreate(db);
     }
 
     public long saveLawyer(Lawyer lawyer) {
@@ -63,6 +65,15 @@ public class LawyersDbHelper extends SQLiteOpenHelper{
                 LawyersContract.LawyerEntry.TABLE_NAME,
                 LawyersContract.LawyerEntry.ID + " LIKE ?",
                 new String[]{lawyerId});
+    }
+
+    public int updateLawyer(Lawyer lawyer, String lawyerId) {
+        return getWritableDatabase().update(
+                LawyersContract.LawyerEntry.TABLE_NAME,
+                lawyer.toContentValues(),
+                LawyersContract.LawyerEntry.ID + " LIKE ?",
+                new String[]{lawyerId}
+        );
     }
 
     public Cursor getAllLawyers() {
@@ -87,6 +98,11 @@ public class LawyersDbHelper extends SQLiteOpenHelper{
                 null,
                 null);
         return c;
+    }
+
+    public Lawyer GetLawerObjectById(String lawyerId)
+    {
+        return new Lawyer(getLawyerById(lawyerId));
     }
 
     private void mockData(SQLiteDatabase sqLiteDatabase) {

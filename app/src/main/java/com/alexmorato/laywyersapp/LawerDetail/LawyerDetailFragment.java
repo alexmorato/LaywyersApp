@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.alexmorato.laywyersapp.Helpers.ToastHelper;
+import com.alexmorato.laywyersapp.LawerAddUpdate.AddEditLawyerActivity;
 import com.alexmorato.laywyersapp.R;
 import com.alexmorato.laywyersapp.data.Lawyer;
 import com.alexmorato.laywyersapp.data.LawyersDbHelper;
@@ -27,6 +28,8 @@ import com.bumptech.glide.Glide;
  * Vista para el detalle del abogado
  */
 public class LawyerDetailFragment extends Fragment {
+    private static final String ARG_LAWYER_ID = "arg_lawyer_id";
+    private static final int REQUEST_UPDATE_DELETE_LAWYER = 10;
 
     private String mLawyerId;
 
@@ -46,7 +49,7 @@ public class LawyerDetailFragment extends Fragment {
     public static LawyerDetailFragment newInstance(String lawyerId) {
         LawyerDetailFragment fragment = new LawyerDetailFragment();
         Bundle args = new Bundle();
-        args.putString("ARG_LAWYER_ID", lawyerId);
+        args.putString(ARG_LAWYER_ID, lawyerId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -56,7 +59,7 @@ public class LawyerDetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            mLawyerId = getArguments().getString("ARG_LAWYER_ID");
+            mLawyerId = getArguments().getString(ARG_LAWYER_ID);
         }
 
         setHasOptionsMenu(true);
@@ -125,7 +128,22 @@ public class LawyerDetailFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // Acciones
+        if (Activity.RESULT_OK == resultCode) {
+            switch (requestCode) {
+                case AddEditLawyerActivity.REQUEST_ADD_LAWYER:
+                    ToastHelper.ShowMessage(getContext(), "Guardado OK");
+                    loadLawyers();
+                    break;
+                case AddEditLawyerActivity.REQUEST_UPDATE_DELETE_LAWYER:
+                    loadLawyers();
+                    break;
+            }
+        }
+    }
+
+    private void loadLawyers() {
+        Intent intent = new Intent(getActivity(), LawyersActivity.class);
+        startActivityForResult(intent, LawyersFragment.REQUEST_UPDATE_DELETE_LAWYER);
     }
 
     @Override
@@ -163,8 +181,8 @@ public class LawyerDetailFragment extends Fragment {
     }
 
     private void showEditScreen() {
-        //Intent intent = new Intent(getActivity(), AddEditLawyerActivity.class);
-        //intent.putExtra(LawyersActivity.EXTRA_LAWYER_ID, mLawyerId);
-        //startActivityForResult(intent, LawyersFragment.REQUEST_UPDATE_DELETE_LAWYER);
+        Intent intent = new Intent(getActivity(), AddEditLawyerActivity.class);
+        intent.putExtra(LawyersActivity.EXTRA_LAWYER_ID, mLawyerId);
+        startActivityForResult(intent, LawyersFragment.REQUEST_UPDATE_DELETE_LAWYER);
     }
 }

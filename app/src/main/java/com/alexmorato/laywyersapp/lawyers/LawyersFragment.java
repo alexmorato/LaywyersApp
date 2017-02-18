@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.alexmorato.laywyersapp.LawerAddUpdate.AddEditLawyerActivity;
 import com.alexmorato.laywyersapp.LawerDetail.LawyerDetailActivity;
 import com.alexmorato.laywyersapp.R;
 import com.alexmorato.laywyersapp.data.LawyersContract;
@@ -51,7 +52,14 @@ public class LawyersFragment extends Fragment {
         // Referencias UI
         mLawyersList = (ListView) root.findViewById(R.id.lawyers_list);
         mLawyersAdapter = new LawyersCursorAdapter(getActivity(), null);
-        mAddButton = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+        mAddButton = (FloatingActionButton) getActivity().findViewById(R.id.fab_add);
+
+        mAddButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showAddScreen();
+            }
+        });
 
         //Listeners
         // Eventos
@@ -114,5 +122,10 @@ public class LawyersFragment extends Fragment {
         Intent intent = new Intent(getActivity(), LawyerDetailActivity.class);
         intent.putExtra(LawyersActivity.EXTRA_LAWYER_ID, lawyerId);
         startActivityForResult(intent, REQUEST_UPDATE_DELETE_LAWYER);
+    }
+
+    private void showAddScreen() {
+        Intent intent = new Intent(getActivity(), AddEditLawyerActivity.class);
+        startActivityForResult(intent, AddEditLawyerActivity.REQUEST_ADD_LAWYER);
     }
 }
