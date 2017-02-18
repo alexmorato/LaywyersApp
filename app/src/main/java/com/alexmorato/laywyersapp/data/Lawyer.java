@@ -1,6 +1,7 @@
 package com.alexmorato.laywyersapp.data;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 
 import java.util.UUID;
 
@@ -24,6 +25,15 @@ public class Lawyer {
         this.phoneNumber = phoneNumber;
         this.bio = bio;
         this.avatarUri = avatarUri;
+    }
+
+    public Lawyer(Cursor cursor) {
+        id = cursor.getString(cursor.getColumnIndex(LawyersContract.LawyerEntry.ID));
+        name = cursor.getString(cursor.getColumnIndex(LawyersContract.LawyerEntry.NAME));
+        specialty = cursor.getString(cursor.getColumnIndex(LawyersContract.LawyerEntry.SPECIALTY));
+        phoneNumber = cursor.getString(cursor.getColumnIndex(LawyersContract.LawyerEntry.PHONE_NUMBER));
+        bio = cursor.getString(cursor.getColumnIndex(LawyersContract.LawyerEntry.BIO));
+        avatarUri = cursor.getString(cursor.getColumnIndex(LawyersContract.LawyerEntry.AVATAR_URI));
     }
 
     public String getId() {

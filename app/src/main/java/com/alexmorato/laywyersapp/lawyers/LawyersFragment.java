@@ -1,6 +1,7 @@
 package com.alexmorato.laywyersapp.lawyers;
 
 
+import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
@@ -10,9 +11,12 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.alexmorato.laywyersapp.LawerDetail.LawyerDetailActivity;
 import com.alexmorato.laywyersapp.R;
+import com.alexmorato.laywyersapp.data.LawyersContract;
 import com.alexmorato.laywyersapp.data.LawyersCursorAdapter;
 import com.alexmorato.laywyersapp.data.LawyersDbHelper;
 
@@ -22,6 +26,8 @@ import com.alexmorato.laywyersapp.data.LawyersDbHelper;
  * create an instance of this fragment.
  */
 public class LawyersFragment extends Fragment {
+
+    private static final int REQUEST_UPDATE_DELETE_LAWYER = 1;
 
     private LawyersDbHelper mLawyersDbHelper;
 
@@ -47,6 +53,19 @@ public class LawyersFragment extends Fragment {
         mLawyersAdapter = new LawyersCursorAdapter(getActivity(), null);
         mAddButton = (FloatingActionButton) getActivity().findViewById(R.id.fab);
 
+        //Listeners
+        // Eventos
+        mLawyersList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Cursor currentItem = (Cursor) mLawyersAdapter.getItem(i);
+                String currentLawyerId = currentItem.getString(
+                        currentItem.getColumnIndex(LawyersContract.LawyerEntry.ID));
+
+                showDetailScreen(currentLawyerId);
+            }
+        });
+
         // Setup
         mLawyersList.setAdapter(mLawyersAdapter);
 
@@ -61,7 +80,13 @@ public class LawyersFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
+        if (Activity.RESULT_OK == resultCode) {
+            switch (requestCode) {
+                case REQUEST_UPDATE_DELETE_LAWYER:
+                    loadLawyers();
+                    break;
+            }
+        }
     }
 
     private void loadLawyers() {
@@ -83,5 +108,11 @@ public class LawyersFragment extends Fragment {
                 // Mostrar empty state
             }
         }
+    }
+
+    private void showDetailScreen(String lawyerId) {
+        Intent intent = new Intent(getActivity(), LawyerDetailActivity.class);
+        intent.putExtra(LawyersActivity.EXTRA_LAWYER_ID, lawyerId);
+        startActivityForResult(intent, REQUEST_UPDATE_DELETE_LAWYER);
     }
 }
